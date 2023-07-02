@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using MvcCoreTutorial.Models.Domain;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<DatabaseContext>(option =>
+    option.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
+//whatever services are needed in application will be declared here
 
+//...................................
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +31,6 @@ app.UseAuthorization();
 //it is a default url
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Person}/{action=Index}/{id?}");
+    pattern: "{controller=Person}/{action=AddPerson}/{id?}");
 
 app.Run();
