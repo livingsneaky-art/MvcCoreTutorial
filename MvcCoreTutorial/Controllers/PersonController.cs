@@ -15,5 +15,10 @@ namespace MvcCoreTutorial.Controllers
             TempData["greeting3"] = "It's TempData msg";
             return View();
         }
+
+        public IActionResult AddPerson()
+        {
+            return View();
+        }
     }
 }
