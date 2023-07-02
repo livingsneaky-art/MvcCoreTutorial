@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MvcCoreTutorial.Models.Domain;
 
 namespace MvcCoreTutorial.Controllers
 {
     public class PersonController : Controller
     {
+        private readonly DatabaseContext _ctx;
+        public PersonController(DatabaseContext ctx)
+        {
+            _ctx = ctx;
+        }
         public IActionResult Index()
         {
             //ViewBag and View Data can send data only from ControllerToView
@@ -23,9 +29,74 @@ namespace MvcCoreTutorial.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPerson(PersonController person)
+        public IActionResult AddPerson(Person person)
         {
-            return View();
+            if(!ModelState.IsValid) 
+            {
+                return View();
+            }
+            try
+            {
+                _ctx.Person.Add(person);
+                _ctx.SaveChanges();
+                TempData["msg"] = "Added successfully!";
+                return RedirectToAction("AddPerson");
+            }
+            catch (Exception ex)
+            {
+                TempData["msg"] = "Could not added!";
+                return View();
+            }
+        }
+
+        public IActionResult DisplayPersons()
+        {
+            var persons = _ctx.Person.ToList();
+            return View(persons);
+        }
+
+        public IActionResult EditPerson(int id)
+        {
+            var person = _ctx.Person.Find(id);
+            return View(person);
+        }
+
+        [HttpPost]
+        public IActionResult EditPerson(Person person)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            try
+            {
+                _ctx.Person.Update(person);
+                _ctx.SaveChanges();
+                return RedirectToAction("DisplayPersons");
+            }
+            catch (Exception ex)
+            {
+                TempData["msg"] = "Could not update!";
+                return View();
+            }
+        }
+
+        public IActionResult DeletePerson(int id)
+        {
+            try
+            {
+                var person = _ctx.Person.Find(id);
+                if (person != null)
+                {
+                    _ctx.Person.Remove(person);
+                    _ctx.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+               
+            }
+            return RedirectToAction("DisplayPersons");
         }
     }
 }
