@@ -16,7 +16,14 @@ namespace MvcCoreTutorial.Controllers
             return View();
         }
 
+        //it is a get method
         public IActionResult AddPerson()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddPerson(PersonController person)
         {
             return View();
         }
